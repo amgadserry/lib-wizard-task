@@ -1,0 +1,52 @@
+.stepper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.indicatorWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.lineIndicator {
+  height: 1px;
+  background-color: black;
+  flex: 1;
+}
+
+.indicator {
+  border-radius: 1000px;
+  height: 3rem;
+  width: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  background-color: rgb(209, 213, 219);
+}
+
+.indicatorSelected {
+  background-color: rgb(107, 114, 128);
+  color: white;
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+}

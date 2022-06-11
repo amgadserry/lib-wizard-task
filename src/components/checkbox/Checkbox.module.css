@@ -1,0 +1,11 @@
+.checkbox {
+  border-radius: 1rem;
+  border: 1px solid rgb(95, 95, 95);
+  padding: 1rem 2rem;
+  color: rgb(95, 95, 95);
+}
+
+.checked {
+  color: white;
+  background-color: rgb(95, 95, 95);
+}
