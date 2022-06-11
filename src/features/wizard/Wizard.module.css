@@ -15,4 +15,12 @@
 
 .stepBody {
   flex: 1;
+  padding: 1rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 1rem;
 }

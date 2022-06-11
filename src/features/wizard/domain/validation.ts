@@ -8,10 +8,6 @@ function _validateStringNotEmpty(value: string): boolean {
   return value.trim().length > 0;
 }
 
-function _validateNumberGreaterThanZero(value: number): boolean {
-  return value > 0;
-}
-
 export function validateGenre(payload: Partial<BookPayload>): string | null {
   if (!!payload.genreId) {
     return null;
@@ -33,29 +29,29 @@ export function validateInformationPayload(
   isDescriptionRequired: boolean
 ): Error<Partial<BookPayloadInformation>> {
   return {
-    authorId: _validateNumberGreaterThanZero(payload.authorId)
-      ? null
-      : "Please select an author",
     description:
       isDescriptionRequired && (payload.description?.trim()?.length ?? 0) === 0
         ? "Please enter description"
         : null,
-    edition: _validateNumberGreaterThanZero(payload.edition)
-      ? null
-      : "Edition must be greater than 0",
-    editionLanguage: _validateStringNotEmpty(payload.editionLanguage)
-      ? null
-      : "Please enter edition language",
-    format: _validateStringNotEmpty(payload.format)
-      ? null
-      : "Please enter format",
-    isbn: _validateStringNotEmpty(payload.isbn) ? null : "Please enter isbn",
-    numberOfPages: _validateNumberGreaterThanZero(payload.numberOfPages)
-      ? null
-      : "Number of pages must be greater than 0",
     title: _validateStringNotEmpty(payload.title) ? null : "Please enter title",
-    publisherId: _validateNumberGreaterThanZero(payload.numberOfPages)
-      ? null
-      : "Please select publisher id",
   };
+}
+
+export function isValidBookPayload(
+  book: BookPayload,
+  isDescriptionRequired: boolean
+): boolean {
+  return (
+    validateGenre(book) === null &&
+    validateSubGenre(book) === null &&
+    (() => {
+      const errors = validateInformationPayload(
+        book.informationPayload,
+        isDescriptionRequired
+      );
+      return Object.keys(errors).every(
+        (key) => errors[key as keyof typeof errors] === null
+      );
+    })()
+  );
 }

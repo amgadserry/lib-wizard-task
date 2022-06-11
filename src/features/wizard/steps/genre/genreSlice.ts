@@ -1,15 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { data } from "../../../../dummy-data";
-import { fetchGenres } from "./genreAPI";
+import { RootState } from "../../../../app/store";
+import { StatusString } from "../../../../components/status/StatusHandler";
+import { fetchGenres, GenreResponse } from "./genreAPI";
 
 export interface GenerSlice {
-  data: typeof data.genres;
-  status: "idle" | "loading" | "failed";
+  data: GenreResponse;
+  status: StatusString;
 }
 
 const initialState: GenerSlice = {
   data: [],
-  status: "loading",
+  status: "idle",
 };
 
 export const fetchGenresAsync = createAsyncThunk(
@@ -17,6 +18,12 @@ export const fetchGenresAsync = createAsyncThunk(
   async () => {
     const response = await fetchGenres();
     return response.data;
+  },
+  {
+    condition: (_, { getState }) => {
+      const status = selectGenreStatus(getState() as RootState);
+      return status === "idle";
+    },
   }
 );
 
@@ -38,5 +45,8 @@ export const genreSlice = createSlice({
       });
   },
 });
+
+export const selectGenreState = (state: RootState) => state.genres;
+export const selectGenreStatus = (state: RootState) => state.genres.status;
 
 export default genreSlice.reducer;

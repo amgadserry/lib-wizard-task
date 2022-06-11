@@ -1,16 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { Error, isValidBookPayload, validateGenre } from "./domain/validation";
+import { submit } from "./wizardAPI";
 
 export type BookPayloadInformation = {
   title: string;
-  authorId: number;
-  isbn: string;
-  publisherId: number;
-  datePublished: Date;
-  numberOfPages: number;
-  format: string;
-  edition: number;
-  editionLanguage: string;
+  authorId?: number;
+  isbn?: string;
+  publisherId?: number;
+  datePublished?: string;
+  numberOfPages?: number;
+  format?: string;
+  edition?: number;
+  editionLanguage?: string;
   description?: string;
 };
 
@@ -24,19 +26,43 @@ export type BookPayload = {
   informationPayload: BookPayloadInformation;
 };
 
+export type SuccessfulSubmissionResult = {
+  data: BookPayload & { id: number };
+};
+export type FailedSubmissionResult = {
+  errors: Error<Partial<BookPayload>> & {
+    informationPayload: Error<Partial<BookPayloadInformation>>;
+  };
+};
+export type SubmissionResult =
+  | SuccessfulSubmissionResult
+  | FailedSubmissionResult;
+
 export interface WizardState {
   currentStep: number;
+  errors: string | string[] | null;
   payload: BookPayload;
+  submissionResult?: SubmissionResult;
   status: "submitting" | "idle" | "submitted";
 }
 
+export const fetchGenresAsync = createAsyncThunk<SubmissionResult>(
+  "genre/fetchGenre",
+  async (_, { getState }): Promise<SubmissionResult> => {
+    const payload = selectPayload(getState() as RootState);
+    const reuslt = await submit(payload);
+    return reuslt;
+  }
+);
+
 const initialState: WizardState = {
   currentStep: 0,
+  errors: null,
   payload: {
     genreId: 0,
     informationPayload: {
       authorId: 0,
-      datePublished: new Date(),
+      datePublished: new Date().toISOString(),
       edition: 0,
       editionLanguage: "",
       format: "",
@@ -60,24 +86,50 @@ export const wizardSlice = createSlice({
     },
     setPayload: (state, action: PayloadAction<Partial<BookPayload>>) => {
       state.payload = { ...state.payload, ...action.payload };
+      state.errors = null;
     },
     reset: () => initialState,
+    tryNextStep: (state) => {
+      if (state.currentStep === 0) {
+        const error = validateGenre(state.payload);
+        if (error !== null) {
+          state.errors = error;
+        } else {
+          const steps = _selectSteps(state);
+          if (state.currentStep + 1 < steps.length) {
+            state.currentStep += 1;
+          }
+        }
+      }
+    },
   },
 });
 
-export const { setCurrentStep, setPayload, reset } = wizardSlice.actions;
+export const { setCurrentStep, setPayload, reset, tryNextStep } =
+  wizardSlice.actions;
 
+export const selectIsDescriptionRequired = (state: RootState) => {
+  if (!!state.wizard.payload.subGenreId) {
+    return true;
+  } else if (!!state.wizard.payload.subGenrePayload) {
+    return state.wizard.payload.subGenrePayload!.isDescriptionRequired;
+  } else {
+    return false;
+  }
+};
 export const selectCurrentStep = (state: RootState) => state.wizard.currentStep;
 export const selectSubmissionStatus = (state: RootState) => state.wizard.status;
 export const selectPayload = (state: RootState) => state.wizard.payload;
+export const selectErrors = (state: RootState) => state.wizard.errors;
 export const selectIsNewSubGenre = (state: RootState) =>
   !!state.wizard.payload?.subGenrePayload;
-export const selectSteps = (state: RootState) => {
+
+const _selectSteps = (state: WizardState) => {
   const steps = ["Genre", "Subgenre", "Add new subgenre", "Information"];
 
-  if (state.wizard.currentStep <= 1) {
+  if (state.currentStep <= 1) {
     return [...steps.slice(0, 2), null];
-  } else if (!state.wizard.payload.subGenreId) {
+  } else if (!state.payload.subGenreId) {
     return steps.concat();
   } else {
     const result = steps.concat();
@@ -85,5 +137,7 @@ export const selectSteps = (state: RootState) => {
     return result;
   }
 };
+
+export const selectSteps = (state: RootState) => _selectSteps(state.wizard);
 
 export default wizardSlice.reducer;

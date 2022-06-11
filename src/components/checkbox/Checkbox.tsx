@@ -3,11 +3,12 @@ import styles from './Checkbox.module.css'
 export type CheckboxProps = {
   checked: boolean;
   text: string;
+  onClick: () => void
 }
 
-export function Stepper(props: CheckboxProps) {
+export function Checkbox(props: CheckboxProps) {
   
-  return <div className={`${styles.wrapper} ${props.checked ? styles.checked : ''}`}>
+  return <div onClick={props.onClick} className={`${styles.checkbox} ${props.checked ? styles.checked : ''}`}>
     {props.text}
   </div>;
 }
