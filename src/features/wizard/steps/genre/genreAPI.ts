@@ -12,7 +12,7 @@ export function fetchGenres() {
             name: g.name,
           })),
         }),
-      3000
+      1000
     )
   );
 }

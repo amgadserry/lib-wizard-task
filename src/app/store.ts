@@ -1,6 +1,7 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import counterReducer from "../features/counter/counterSlice";
 import genreReducer from "../features/wizard/steps/genre/genreSlice";
+import subgenresReducer from "../features/wizard/steps/subgenres/subgenresSlice";
 import wizardReducer from "../features/wizard/wizardSlice";
 
 export const store = configureStore({
@@ -8,6 +9,7 @@ export const store = configureStore({
     wizard: wizardReducer,
     counter: counterReducer,
     genres: genreReducer,
+    subgenres: subgenresReducer,
   },
 });
 

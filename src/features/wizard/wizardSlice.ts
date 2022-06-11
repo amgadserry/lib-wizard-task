@@ -46,8 +46,8 @@ export interface WizardState {
   status: "submitting" | "idle" | "submitted";
 }
 
-export const fetchGenresAsync = createAsyncThunk<SubmissionResult>(
-  "genre/fetchGenre",
+export const submitBookAsync = createAsyncThunk<SubmissionResult>(
+  "wizard/submitBook",
   async (_, { getState }): Promise<SubmissionResult> => {
     const payload = selectPayload(getState() as RootState);
     const reuslt = await submit(payload);
@@ -79,9 +79,9 @@ export const wizardSlice = createSlice({
   name: "wizard",
   initialState,
   reducers: {
-    setCurrentStep: (state, action: PayloadAction<number>) => {
-      if (state.currentStep > action.payload) {
-        state.currentStep = action.payload;
+    tryBack: (state) => {
+      if (state.currentStep > 0) {
+        state.currentStep -= 1;
       }
     },
     setPayload: (state, action: PayloadAction<Partial<BookPayload>>) => {
@@ -105,8 +105,7 @@ export const wizardSlice = createSlice({
   },
 });
 
-export const { setCurrentStep, setPayload, reset, tryNextStep } =
-  wizardSlice.actions;
+export const { tryBack, setPayload, reset, tryNextStep } = wizardSlice.actions;
 
 export const selectIsDescriptionRequired = (state: RootState) => {
   if (!!state.wizard.payload.subGenreId) {

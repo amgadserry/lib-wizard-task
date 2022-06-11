@@ -5,6 +5,7 @@ import {
   selectSteps,
   selectSubmissionStatus,
   setPayload,
+  tryBack,
   tryNextStep,
 } from "./wizardSlice";
 import styles from "./Wizard.module.css";
@@ -13,6 +14,7 @@ import { Stepper } from "../../components/stepper/Stepper";
 import { Loading } from "../../components/loading/Loading";
 import { Genre } from "./steps/genre/Genre";
 import { Button } from "../../components/button/Button";
+import { Subgenre } from "./steps/subgenres/Subgenre";
 
 export function Wizard() {
   const errors = useAppSelector(selectErrors);
@@ -31,13 +33,23 @@ export function Wizard() {
           value={payload.genreId}
         ></Genre>
       );
+    } else if (currentStep === 1) {
+      return (
+        <Subgenre
+          onChange={(id) => dispatch(setPayload({ subGenreId:  id, subGenrePayload: undefined }))}
+          onAddNewSelected={() => dispatch(setPayload({ subGenreId:  undefined, subGenrePayload: { name: '', isDescriptionRequired: false } }))}
+          error={errors as string | null}
+          value={payload.subGenreId}
+          isNewSelected={!!payload.subGenrePayload}
+        ></Subgenre>
+      );
     }
   };
 
   const _renderActions = () => {
     return (
       <div className={styles.actions}>
-        {currentStep > 0 && <Button onClick={() => {}}>Back</Button>}
+        {currentStep > 0 && <Button onClick={() => dispatch(tryBack())}>Back</Button>}
         {currentStep < steps.length - 1 && (
           <Button onClick={() => dispatch(tryNextStep())}>Next</Button>
         )}

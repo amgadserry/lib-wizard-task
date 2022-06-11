@@ -21,8 +21,8 @@ export const fetchGenresAsync = createAsyncThunk(
   },
   {
     condition: (_, { getState }) => {
-      const status = selectGenreStatus(getState() as RootState);
-      return status === "idle";
+      const state = selectGenreState(getState() as RootState);
+      return state.status !== "loading" && state.data.length === 0;
     },
   }
 );
