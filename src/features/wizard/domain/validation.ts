@@ -45,7 +45,7 @@ export function validateInformationPayload(
   return {
     description:
       isDescriptionRequired &&
-      _validateStringNotEmpty(payload.description ?? "")
+      !_validateStringNotEmpty(payload.description ?? "")
         ? "Please enter description"
         : null,
     title: _validateStringNotEmpty(payload.title) ? null : "Please enter title",
@@ -55,7 +55,6 @@ export function validateInformationPayload(
 export function errorPayloadContainsNoValidationErrors(
   error: Error<any>
 ): boolean {
-  console.log(Object.keys(error).every((key) => error[key] === null));
   return Object.keys(error).every((key) => error[key] === null);
 }
 

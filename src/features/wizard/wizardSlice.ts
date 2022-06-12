@@ -143,7 +143,6 @@ export const wizardSlice = createSlice({
           !errorPayloadContainsNoValidationErrors(error as Error<any>)) ||
         (typeof error === "string" && error !== null)
       ) {
-        console.log("here");
         state.errors = error;
       } else {
         state.errors = null;

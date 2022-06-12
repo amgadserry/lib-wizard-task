@@ -1,5 +1,6 @@
 import {
   BookPayloadInformation,
+  reset,
   selectCurrentStep,
   selectErrors,
   selectIsNewSubGenre,
@@ -22,7 +23,8 @@ import { Subgenre } from "./steps/subgenres/Subgenre";
 import { NewSubgenre } from "./steps/newSubgenre/NewSubgenre";
 import { Error } from "./domain/validation";
 import { BookInformation } from "./steps/bookInformation/BookInformation";
-import { flushSync } from "react-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 
 export function Wizard() {
   const errors = useAppSelector(selectErrors);
@@ -112,7 +114,11 @@ export function Wizard() {
         );
 
       case "submitted":
-        return <div className={styles.submitting}>Success</div>;
+        return <div className={styles.submitting}>
+          <FontAwesomeIcon icon={faCheckCircle} size="10x" color="green"/>
+          <p>Book added successfully</p>
+          <Button onClick={() => dispatch(reset())} type="action">Add another book</Button>
+        </div>;
 
       case "submitting":
         return <Loading text="Submitting..."></Loading>;

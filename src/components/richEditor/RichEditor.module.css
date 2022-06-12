@@ -12,6 +12,10 @@
   flex: 1;
 }
 
+.wrapper > div > div {
+  padding: 1rem;
+}
+
 .wrapper > span {
   color: red;
   font-size: 1.25rem;
