@@ -1,4 +1,3 @@
-import { Editor } from "draft-js";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { Input } from "../../../../components/input/Input";
 import RichEditor from "../../../../components/richEditor/RichEditor";
