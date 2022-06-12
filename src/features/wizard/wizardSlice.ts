@@ -1,6 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Error, isValidBookPayload, validateGenre } from "./domain/validation";
+import {
+  Error,
+  errorPayloadContainsNoValidationErrors,
+  validateGenre,
+  validateInformationPayload,
+  validateSubGenre,
+  validateSubGenrePayload,
+} from "./domain/validation";
 import { submit } from "./wizardAPI";
 
 export type BookPayloadInformation = {
@@ -16,13 +23,15 @@ export type BookPayloadInformation = {
   description?: string;
 };
 
+export type SubgenrePayload = {
+  name: string;
+  isDescriptionRequired: boolean;
+};
+
 export type BookPayload = {
   genreId: number;
   subGenreId?: number;
-  subGenrePayload?: {
-    name: string;
-    isDescriptionRequired: boolean;
-  };
+  subGenrePayload?: SubgenrePayload;
   informationPayload: BookPayloadInformation;
 };
 
@@ -40,7 +49,11 @@ export type SubmissionResult =
 
 export interface WizardState {
   currentStep: number;
-  errors: string | string[] | null;
+  errors:
+    | string
+    | Error<Partial<SubgenrePayload>>
+    | Error<Partial<BookPayloadInformation>>
+    | null;
   payload: BookPayload;
   submissionResult?: SubmissionResult;
   status: "submitting" | "idle" | "submitted";
@@ -52,6 +65,10 @@ export const submitBookAsync = createAsyncThunk<SubmissionResult>(
     const payload = selectPayload(getState() as RootState);
     const reuslt = await submit(payload);
     return reuslt;
+  },
+  {
+    condition: (_, { getState }) =>
+      (getState() as RootState).wizard.errors === null,
   }
 );
 
@@ -61,14 +78,6 @@ const initialState: WizardState = {
   payload: {
     genreId: 0,
     informationPayload: {
-      authorId: 0,
-      datePublished: new Date().toISOString(),
-      edition: 0,
-      editionLanguage: "",
-      format: "",
-      isbn: "",
-      numberOfPages: 0,
-      publisherId: 0,
       title: "",
     },
   },
@@ -85,40 +94,108 @@ export const wizardSlice = createSlice({
       }
     },
     setPayload: (state, action: PayloadAction<Partial<BookPayload>>) => {
-      state.payload = { ...state.payload, ...action.payload };
+      state.payload = {
+        ...state.payload,
+        ...action.payload,
+      };
+      state.errors = null;
+    },
+    setSubgenrePayload: (
+      state,
+      action: PayloadAction<Partial<SubgenrePayload>>
+    ) => {
+      state.payload.subGenrePayload = {
+        ...state.payload.subGenrePayload,
+        ...action.payload,
+      } as SubgenrePayload;
+      state.errors = null;
+    },
+    setBookInformationPayload: (
+      state,
+      action: PayloadAction<Partial<BookPayloadInformation>>
+    ) => {
+      state.payload.informationPayload = {
+        ...state.payload.informationPayload,
+        ...action.payload,
+      } as BookPayloadInformation;
       state.errors = null;
     },
     reset: () => initialState,
     tryNextStep: (state) => {
-      if (state.currentStep === 0) {
-        const error = validateGenre(state.payload);
-        if (error !== null) {
-          state.errors = error;
+      const error = (() => {
+        if (state.currentStep === 0) {
+          return validateGenre(state.payload);
+        } else if (state.currentStep === 1) {
+          return validateSubGenre(state.payload);
+        } else if (state.currentStep === 2 && !!state.payload.subGenrePayload) {
+          return validateSubGenrePayload(state.payload.subGenrePayload);
         } else {
-          const steps = _selectSteps(state);
-          if (state.currentStep + 1 < steps.length) {
-            state.currentStep += 1;
-          }
+          return validateInformationPayload(
+            state.payload.informationPayload,
+            _selectIsDescriptionRequired(state)
+          );
+        }
+      })();
+
+      if (
+        (typeof error === "object" &&
+          error !== null &&
+          !errorPayloadContainsNoValidationErrors(error as Error<any>)) ||
+        (typeof error === "string" && error !== null)
+      ) {
+        console.log("here");
+        state.errors = error;
+      } else {
+        state.errors = null;
+        const steps = _selectSteps(state);
+        if (state.currentStep + 1 < steps.length) {
+          state.currentStep += 1;
         }
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(submitBookAsync.pending, (state) => {
+        state.status = "submitting";
+      })
+      .addCase(submitBookAsync.fulfilled, (state) => {
+        state.status = "submitted";
+      })
+      .addCase(submitBookAsync.rejected, (state) => {
+        state.status = "idle";
+      });
+  },
 });
 
-export const { tryBack, setPayload, reset, tryNextStep } = wizardSlice.actions;
+export const {
+  tryBack,
+  setPayload,
+  setSubgenrePayload,
+  setBookInformationPayload,
+  reset,
+  tryNextStep,
+} = wizardSlice.actions;
 
-export const selectIsDescriptionRequired = (state: RootState) => {
-  if (!!state.wizard.payload.subGenreId) {
+const _selectIsDescriptionRequired = (state: WizardState) => {
+  if (!!state.payload.subGenreId) {
     return true;
-  } else if (!!state.wizard.payload.subGenrePayload) {
-    return state.wizard.payload.subGenrePayload!.isDescriptionRequired;
+  } else if (!!state.payload.subGenrePayload) {
+    return state.payload.subGenrePayload!.isDescriptionRequired;
   } else {
     return false;
   }
 };
+
+export const selectIsDescriptionRequired = (state: RootState) =>
+  _selectIsDescriptionRequired(state.wizard);
 export const selectCurrentStep = (state: RootState) => state.wizard.currentStep;
 export const selectSubmissionStatus = (state: RootState) => state.wizard.status;
 export const selectPayload = (state: RootState) => state.wizard.payload;
+export const selectSubgenrePayload = (state: RootState) =>
+  state.wizard.payload.subGenrePayload;
+export const selectBookInformationPayload = (state: RootState) =>
+  state.wizard.payload.informationPayload;
 export const selectErrors = (state: RootState) => state.wizard.errors;
 export const selectIsNewSubGenre = (state: RootState) =>
   !!state.wizard.payload?.subGenrePayload;

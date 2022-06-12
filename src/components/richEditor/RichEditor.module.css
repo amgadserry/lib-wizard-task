@@ -1,0 +1,18 @@
+.wrapper {
+  min-height: 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wrapper > div:first-child, .wrapper > div > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.wrapper > span {
+  color: red;
+  font-size: 1.25rem;
+}

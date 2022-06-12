@@ -1,4 +1,8 @@
-import { BookPayload, BookPayloadInformation } from "../wizardSlice";
+import {
+  BookPayload,
+  BookPayloadInformation,
+  SubgenrePayload,
+} from "../wizardSlice";
 
 export type Error<T> = {
   [Property in keyof Partial<T>]: string | null;
@@ -24,17 +28,35 @@ export function validateSubGenre(payload: Partial<BookPayload>): string | null {
   }
 }
 
+export function validateSubGenrePayload(
+  payload: Partial<SubgenrePayload>
+): Error<Partial<SubgenrePayload>> {
+  return {
+    name: _validateStringNotEmpty(payload.name ?? "")
+      ? null
+      : "Please enter name",
+  };
+}
+
 export function validateInformationPayload(
   payload: BookPayloadInformation,
   isDescriptionRequired: boolean
 ): Error<Partial<BookPayloadInformation>> {
   return {
     description:
-      isDescriptionRequired && (payload.description?.trim()?.length ?? 0) === 0
+      isDescriptionRequired &&
+      _validateStringNotEmpty(payload.description ?? "")
         ? "Please enter description"
         : null,
     title: _validateStringNotEmpty(payload.title) ? null : "Please enter title",
   };
+}
+
+export function errorPayloadContainsNoValidationErrors(
+  error: Error<any>
+): boolean {
+  console.log(Object.keys(error).every((key) => error[key] === null));
+  return Object.keys(error).every((key) => error[key] === null);
 }
 
 export function isValidBookPayload(
@@ -44,14 +66,12 @@ export function isValidBookPayload(
   return (
     validateGenre(book) === null &&
     validateSubGenre(book) === null &&
-    (() => {
-      const errors = validateInformationPayload(
-        book.informationPayload,
-        isDescriptionRequired
-      );
-      return Object.keys(errors).every(
-        (key) => errors[key as keyof typeof errors] === null
-      );
-    })()
+    (!book.subGenrePayload ||
+      errorPayloadContainsNoValidationErrors(
+        validateSubGenrePayload(book.subGenrePayload)
+      )) &&
+    errorPayloadContainsNoValidationErrors(
+      validateInformationPayload(book.informationPayload, isDescriptionRequired)
+    )
   );
 }

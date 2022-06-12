@@ -1,0 +1,17 @@
+.toggle {
+  border-radius: 1rem;
+  border: 2px solid rgb(95, 95, 95);
+  padding: 1rem 2rem;
+  color: rgb(95, 95, 95);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  transition: all 300ms ease-out;
+}
+
+.checked {
+  color: white;
+  background-color: rgb(95, 95, 95);
+}

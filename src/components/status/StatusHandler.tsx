@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { PropsWithChildren } from "react";
 import { Loading } from "../loading/Loading";
 import styles from './StatusHandler.module.css'
 

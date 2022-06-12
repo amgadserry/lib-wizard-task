@@ -1,17 +1,19 @@
-.checkbox {
-  border-radius: 1rem;
-  border: 2px solid rgb(95, 95, 95);
-  padding: 1rem 2rem;
-  color: rgb(95, 95, 95);
-  cursor: pointer;
+.wrapper {
   display: flex;
-  justify-content: center;
+  width: 100%;
+  gap: 1rem;
   align-items: center;
-  font-size: 2rem;
-  transition: all 300ms ease-out;
 }
 
-.checked {
-  color: white;
-  background-color: rgb(95, 95, 95);
+.wrapper>label {
+  font-size: 1.5rem;
+  color: black;
+}
+
+.wrapper>input {
+  border-radius: .25rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid gray;
+  width: 1.5rem;
+  height: 1.5rem;
 }

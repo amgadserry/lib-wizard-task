@@ -1,0 +1,14 @@
+.wrapper {
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.colSpan3 {
+  grid-column: 1 / span 3;
+}
+
+.col1 {
+  grid-column-start: 1;
+}
