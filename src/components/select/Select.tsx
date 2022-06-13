@@ -15,10 +15,18 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>(
   (props, ref) => {
     const helperText = "Please select one of the options";
     const id = useId();
+    const optionsWithUniqueKeys = props.options.map((opt, idx) => ({
+      option: opt,
+      fakeValue: (idx + 1).toString(),
+    }));
     const onSelect: ChangeEventHandler<HTMLSelectElement> = (event) => {
       const value = event.target.value;
       if (value === helperText) props.onSelect(undefined);
-      else props.onSelect(value);
+      else
+        props.onSelect(
+          optionsWithUniqueKeys.find((opt) => opt.fakeValue === value)!.option
+            .value
+        );
     };
 
     return (
@@ -32,9 +40,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>(
           value={props.value}
         >
           <option>{helperText}</option>
-          {props.options.map((opt) => (
-            <option value={opt.value} key={opt.value}>
-              {opt.label}
+          {optionsWithUniqueKeys.map((opt) => (
+            <option value={opt.fakeValue} key={opt.fakeValue}>
+              {opt.option.label}
             </option>
           ))}
         </select>

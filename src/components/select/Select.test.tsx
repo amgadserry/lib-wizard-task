@@ -65,7 +65,9 @@ describe("Select", () => {
       ></Select>
     );
 
-    fireEvent.change(getByRole("combobox"), { target: { value: "text2" } });
+    fireEvent.change(getByRole("combobox"), {
+      target: { value: "2" },
+    });
 
     expect(mockFn).toBeCalledWith("text2");
   });

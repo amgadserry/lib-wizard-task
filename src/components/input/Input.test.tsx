@@ -64,16 +64,12 @@ describe("Input", () => {
 
   test("renders current date with no value", () => {
     const date = new Date();
-    const { getByPlaceholderText, rerender } = render(
+    const { getByPlaceholderText } = render(
       <Input type="date" onChange={() => {}} placeholder="id"></Input>
     );
 
     expect(getByPlaceholderText("id")).toBeInTheDocument();
-    expect(getByPlaceholderText("id")).toHaveValue(
-      `${date.getFullYear()}-${(date.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
-    );
+    expect(getByPlaceholderText("id")).toHaveValue("");
   });
 
   test("call onChange (text) when typing", () => {
@@ -122,7 +118,8 @@ describe("Input", () => {
     });
     expect(mockFn).toBeCalledWith(
       new Date(
-        new Date("2020-01-01").getTime() + new Date("2020-01-01").getTimezoneOffset() * 60000
+        new Date("2020-01-01").getTime() +
+          new Date("2020-01-01").getTimezoneOffset() * 60000
       ).toISOString()
     );
   });

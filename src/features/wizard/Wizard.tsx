@@ -24,7 +24,7 @@ import { NewSubgenre } from "./steps/newSubgenre/NewSubgenre";
 import { Error } from "./domain/validation";
 import { BookInformation } from "./steps/bookInformation/BookInformation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 export function Wizard() {
   const errors = useAppSelector(selectErrors);
@@ -48,7 +48,12 @@ export function Wizard() {
       return (
         <Subgenre
           onChange={(subgenre) =>
-            dispatch(setPayload({ selectedSubgenreResponse: subgenre, subGenrePayload: undefined }))
+            dispatch(
+              setPayload({
+                selectedSubgenreResponse: subgenre,
+                subGenrePayload: undefined,
+              })
+            )
           }
           onAddNewSelected={() =>
             dispatch(
@@ -81,9 +86,12 @@ export function Wizard() {
   const _renderActions = () => {
     return (
       <div className={styles.actions}>
-        {currentStep > 0 && (
-          <Button onClick={() => dispatch(tryBack())}>Back</Button>
-        )}
+        <Button
+          disabled={currentStep === 0}
+          onClick={() => dispatch(tryBack())}
+        >
+          Back
+        </Button>
         {currentStep < steps.length - 1 && (
           <Button onClick={() => dispatch(tryNextStep())}>Next</Button>
         )}
@@ -94,7 +102,7 @@ export function Wizard() {
               dispatch(submitBookAsync());
             }}
           >
-            Submit
+            Add
           </Button>
         )}
       </div>
@@ -114,11 +122,15 @@ export function Wizard() {
         );
 
       case "submitted":
-        return <div className={styles.submitting}>
-          <FontAwesomeIcon icon={faCheckCircle} size="10x" color="green"/>
-          <p>Book added successfully</p>
-          <Button onClick={() => dispatch(reset())} type="action">Add another book</Button>
-        </div>;
+        return (
+          <div className={styles.submitting}>
+            <FontAwesomeIcon icon={faCheckCircle} size="10x" color="green" />
+            <p>Book added successfully</p>
+            <Button onClick={() => dispatch(reset())} type="action">
+              Add another book
+            </Button>
+          </div>
+        );
 
       case "submitting":
         return <Loading text="Submitting..."></Loading>;

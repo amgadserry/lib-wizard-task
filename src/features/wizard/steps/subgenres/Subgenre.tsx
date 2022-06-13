@@ -2,12 +2,11 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { StatusHandler } from "../../../../components/status/StatusHandler";
 import { fetchSubgenresAsync, selectSubgenresState } from "./subgenresSlice";
-import styles from "./Subgenre.module.css";
-import { Toggle } from "../../../../components/toggle/Toggle";
 import { SubgenreResponse } from "../../../../dummy-data";
+import { ToggleGroup } from "../../../../components/toggleGroup/ToggleGroup";
 
 export type GenreProps = {
-  onChange: (id: SubgenreResponse) => void;
+  onChange: (response: SubgenreResponse) => void;
   onAddNewSelected: () => void;
   error: string | null;
   value?: SubgenreResponse;
@@ -22,27 +21,22 @@ export function Subgenre(props: GenreProps) {
     dispatch(fetchSubgenresAsync());
   }, []);
 
+  const onChange = (value: SubgenreResponse | null) => {
+    if (value === null) props.onAddNewSelected();
+    else props.onChange(value);
+  };
+
   return (
     <StatusHandler status={state.status}>
-      <div className={styles.wrapper}>
-        <div className={styles.grid}>
-          {state.data.map((g) => (
-            <Toggle
-              checked={props.value?.id === g.id}
-              text={g.name}
-              key={g.id}
-              onClick={() => props.onChange(g)}
-            />
-          ))}
-          <Toggle
-            checked={props.isNewSelected}
-            text="Add new"
-            key={-1}
-            onClick={() => props.onAddNewSelected()}
-          />
-        </div>
-        {!!props.error && <div className={styles.error}>{props.error}</div>}
-      </div>
+      <ToggleGroup
+        onChange={onChange}
+        options={[
+          ...state.data.map((g) => ({ label: g.name, value: g })),
+          { label: "Add new", value: null },
+        ]}
+        value={props.isNewSelected ? null : props.value}
+        error={props.error}
+      />
     </StatusHandler>
   );
 }

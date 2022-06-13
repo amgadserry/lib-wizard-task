@@ -30,8 +30,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       if (props.type === "text") {
         props.onChange(value);
       } else if (props.type === "date") {
-        const noneUtc = new Date(value)
-        props.onChange(new Date(noneUtc.getTime() + noneUtc.getTimezoneOffset() * 60000).toISOString());
+        const noneUtc = new Date(value);
+        props.onChange(
+          new Date(
+            noneUtc.getTime() + noneUtc.getTimezoneOffset() * 60000
+          ).toISOString()
+        );
       } else if (props.type === "number") {
         if (value === "") {
           props.onChange(0);
@@ -42,12 +46,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     const getValue = () => {
+      if (!props.value) return undefined;
       if (props.type === "date") {
-        const date = props.value ? new Date(props.value) : new Date();
+        const date = new Date(props.value);
         return `${date.getFullYear()}-${(date.getMonth() + 1)
           .toString()
-          .padStart(2, "0")}-${(date.getDate()).toString()
-            .padStart(2, "0")}`;
+          .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
       }
       return props.value;
     };
@@ -61,7 +65,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={id}
           type={props.type}
           onChange={onChange}
-          value={getValue()}
+          value={getValue() ?? ""}
         />
         {props.error && <span>{props.error}</span>}
       </div>

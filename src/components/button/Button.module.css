@@ -28,10 +28,15 @@
   color: white;
 }
 
-.common:hover {
+.common:hover:not(.disabled) {
   filter: brightness(0.85);
 }
 
-.common:active {
+.common:active:not(.disabled) {
   filter: brightness(0.6);
+}
+
+.disabled {
+  filter: brightness(1.5);
+  cursor: auto;
 }

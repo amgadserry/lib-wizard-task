@@ -286,15 +286,21 @@ describe("Wizard slice", () => {
   });
 
   it("should set valid status on submitBookAsync.pending", () => {
-    expect(wizardReducer(initialState, submitBookAsync.pending).status).toEqual('submitting');
+    expect(wizardReducer(initialState, submitBookAsync.pending).status).toEqual(
+      "submitting"
+    );
   });
 
   it("should set valid status on submitBookAsync.rejected", () => {
-    expect(wizardReducer(initialState, submitBookAsync.rejected).status).toEqual('idle');
+    expect(
+      wizardReducer(initialState, submitBookAsync.rejected).status
+    ).toEqual("idle");
   });
 
   it("should set valid status on submitBookAsync.rejected", () => {
-    expect(wizardReducer(initialState, submitBookAsync.fulfilled).status).toEqual('submitted');
+    expect(
+      wizardReducer(initialState, submitBookAsync.fulfilled).status
+    ).toEqual("submitted");
   });
 });
 

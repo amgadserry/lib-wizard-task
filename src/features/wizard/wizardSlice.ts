@@ -79,7 +79,7 @@ const initialState: WizardState = {
   payload: {
     genreId: 0,
     informationPayload: {
-      title: ""
+      title: "",
     },
   },
   status: "idle",
@@ -92,6 +92,7 @@ export const wizardSlice = createSlice({
     tryBack: (state) => {
       if (state.currentStep > 0) {
         state.currentStep -= 1;
+        state.errors = null;
       }
     },
     setPayload: (state, action: PayloadAction<Partial<BookPayload>>) => {

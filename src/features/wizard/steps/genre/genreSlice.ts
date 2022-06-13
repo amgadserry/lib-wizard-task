@@ -3,12 +3,12 @@ import { RootState } from "../../../../app/store";
 import { StatusString } from "../../../../components/status/StatusHandler";
 import { fetchGenres, GenreResponse } from "./genreAPI";
 
-export interface GenerSlice {
+export interface GenerSliceState {
   data: GenreResponse;
   status: StatusString;
 }
 
-const initialState: GenerSlice = {
+const initialState: GenerSliceState = {
   data: [],
   status: "idle",
 };
