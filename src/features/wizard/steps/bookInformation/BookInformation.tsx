@@ -20,7 +20,6 @@ export function BookInformation(props: BookInformationProps) {
 
   return (
     <div className={styles.wrapper}>
-      {JSON.stringify(payload)}
       <Input
         className={styles.colSpan3}
         label="Book title"
