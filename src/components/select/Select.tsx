@@ -17,7 +17,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>(
     const id = useId();
     const onSelect: ChangeEventHandler<HTMLSelectElement> = (event) => {
       const value = event.target.value;
-      if (value !== helperText) props.onSelect(value);
+      if (value === helperText) props.onSelect(undefined);
       else props.onSelect(value);
     };
 
