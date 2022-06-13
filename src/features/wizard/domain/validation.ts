@@ -4,6 +4,7 @@ import {
   SubgenrePayload,
 } from "../wizardSlice";
 
+
 export type Error<T> = {
   [Property in keyof Partial<T>]: string | null;
 };
@@ -21,7 +22,7 @@ export function validateGenre(payload: Partial<BookPayload>): string | null {
 }
 
 export function validateSubGenre(payload: Partial<BookPayload>): string | null {
-  if (!!payload.subGenreId || !!payload.subGenrePayload) {
+  if (!!payload.selectedSubgenreResponse || !!payload.subGenrePayload) {
     return null;
   } else {
     return "Please select sub genre";

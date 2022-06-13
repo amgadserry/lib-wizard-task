@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { SubgenreResponse } from "../../dummy-data";
 import {
   Error,
   errorPayloadContainsNoValidationErrors,
@@ -30,7 +31,7 @@ export type SubgenrePayload = {
 
 export type BookPayload = {
   genreId: number;
-  subGenreId?: number;
+  selectedSubgenreResponse?: SubgenreResponse;
   subGenrePayload?: SubgenrePayload;
   informationPayload: BookPayloadInformation;
 };
@@ -78,7 +79,7 @@ const initialState: WizardState = {
   payload: {
     genreId: 0,
     informationPayload: {
-      title: "",
+      title: ""
     },
   },
   status: "idle",
@@ -177,8 +178,8 @@ export const {
 } = wizardSlice.actions;
 
 const _selectIsDescriptionRequired = (state: WizardState) => {
-  if (!!state.payload.subGenreId) {
-    return true;
+  if (!!state.payload.selectedSubgenreResponse) {
+    return state.payload.selectedSubgenreResponse.isDescriptionRequired;
   } else if (!!state.payload.subGenrePayload) {
     return state.payload.subGenrePayload!.isDescriptionRequired;
   } else {
@@ -204,7 +205,7 @@ const _selectSteps = (state: WizardState) => {
 
   if (state.currentStep <= 1) {
     return [...steps.slice(0, 2), null];
-  } else if (!state.payload.subGenreId) {
+  } else if (!state.payload.selectedSubgenreResponse) {
     return steps.concat();
   } else {
     const result = steps.concat();

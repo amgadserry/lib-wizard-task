@@ -4,12 +4,13 @@ import { StatusHandler } from "../../../../components/status/StatusHandler";
 import { fetchSubgenresAsync, selectSubgenresState } from "./subgenresSlice";
 import styles from "./Subgenre.module.css";
 import { Toggle } from "../../../../components/toggle/Toggle";
+import { SubgenreResponse } from "../../../../dummy-data";
 
 export type GenreProps = {
-  onChange: (id: number) => void;
+  onChange: (id: SubgenreResponse) => void;
   onAddNewSelected: () => void;
   error: string | null;
-  value?: number;
+  value?: SubgenreResponse;
   isNewSelected: boolean;
 };
 
@@ -27,10 +28,10 @@ export function Subgenre(props: GenreProps) {
         <div className={styles.grid}>
           {state.data.map((g) => (
             <Toggle
-              checked={props.value === g.id}
+              checked={props.value?.id === g.id}
               text={g.name}
               key={g.id}
-              onClick={() => props.onChange(g.id)}
+              onClick={() => props.onChange(g)}
             />
           ))}
           <Toggle

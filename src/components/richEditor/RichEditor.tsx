@@ -123,7 +123,7 @@ export type RichEditorProps = {
   error?: string | null;
 };
 
-export default (props: RichEditorProps) => {
+const RichEditor = (props: RichEditorProps) => {
   const editor = useEditor({
     extensions: [StarterKit],
     editable: true,
@@ -138,3 +138,5 @@ export default (props: RichEditorProps) => {
     </div>
   );
 };
+
+export default RichEditor;

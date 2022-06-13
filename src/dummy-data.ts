@@ -1,3 +1,6 @@
+
+export type SubgenreResponse = typeof data.genres[0]["subgenres"][0];
+
 export const data = {
   genres: [
     {

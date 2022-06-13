@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../../../app/store";
 import { StatusString } from "../../../../components/status/StatusHandler";
+import { SubgenreResponse } from "../../../../dummy-data";
 import { selectPayload } from "../../wizardSlice";
-import { fetchSubgenres, SubgenreResponse } from "./subgenreAPI";
+import { fetchSubgenres } from "./subgenreAPI";
 
 export interface SubgenerSliceState {
-  data: SubgenreResponse;
+  data: SubgenreResponse[];
   genreId: number;
   status: StatusString;
 }

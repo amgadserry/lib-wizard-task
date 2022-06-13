@@ -47,19 +47,19 @@ export function Wizard() {
     } else if (currentStep === 1) {
       return (
         <Subgenre
-          onChange={(id) =>
-            dispatch(setPayload({ subGenreId: id, subGenrePayload: undefined }))
+          onChange={(subgenre) =>
+            dispatch(setPayload({ selectedSubgenreResponse: subgenre, subGenrePayload: undefined }))
           }
           onAddNewSelected={() =>
             dispatch(
               setPayload({
-                subGenreId: undefined,
+                selectedSubgenreResponse: undefined,
                 subGenrePayload: { name: "", isDescriptionRequired: false },
               })
             )
           }
           error={errors as string | null}
-          value={payload.subGenreId}
+          value={payload.selectedSubgenreResponse}
           isNewSelected={!!payload.subGenrePayload}
         ></Subgenre>
       );

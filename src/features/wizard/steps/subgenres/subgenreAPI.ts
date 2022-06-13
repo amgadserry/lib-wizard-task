@@ -1,9 +1,7 @@
-import { data } from "../../../../dummy-data";
-
-export type SubgenreResponse = typeof data.genres[0]["subgenres"];
+import { data, SubgenreResponse } from "../../../../dummy-data";
 
 export function fetchSubgenres(genreId: number) {
-  return new Promise<{ data: SubgenreResponse }>((resolve) =>
+  return new Promise<{ data: SubgenreResponse[] }>((resolve) =>
     setTimeout(
       () =>
         resolve({
