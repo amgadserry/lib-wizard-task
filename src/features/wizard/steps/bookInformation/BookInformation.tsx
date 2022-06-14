@@ -77,16 +77,17 @@ export function BookInformation(props: BookInformationProps) {
         }
         type="date"
       />
-      <Input
-        className={styles.col1}
-        label="Number of pages"
-        placeholder="Number of pages"
-        value={payload.numberOfPages}
-        onChange={(value) =>
-          dispatch(setBookInformationPayload({ numberOfPages: value }))
-        }
-        type="number"
-      />
+      <div className={`${styles.col1} ${styles.noOfPagesWrapper}`}>
+        <Input
+          label="Number of pages"
+          placeholder="Number of pages"
+          value={payload.numberOfPages}
+          onChange={(value) =>
+            dispatch(setBookInformationPayload({ numberOfPages: value }))
+          }
+          type="number"
+        />
+      </div>
       <Select
         className={styles.col1}
         label="Format"
