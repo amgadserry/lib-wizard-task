@@ -24,7 +24,7 @@ import { NewSubgenre } from "./steps/newSubgenre/NewSubgenre";
 import { Error } from "./domain/validation";
 import { BookInformation } from "./steps/bookInformation/BookInformation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export function Wizard() {
   const errors = useAppSelector(selectErrors);
@@ -87,10 +87,11 @@ export function Wizard() {
     return (
       <div className={styles.actions}>
         <Button
+          type="action"
           disabled={currentStep === 0}
           onClick={() => dispatch(tryBack())}
         >
-          Back
+          <FontAwesomeIcon icon={faArrowLeft} /> Back
         </Button>
         {currentStep < steps.length - 1 && (
           <Button onClick={() => dispatch(tryNextStep())}>Next</Button>
