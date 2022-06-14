@@ -24,7 +24,7 @@ export function ToggleGroup(props: ToggleGroupProps<any>) {
           />
         ))}
       </div>
-      {props.error && <span>{props.error}</span>}
+      {props.error && <span className={styles.error}>{props.error}</span>}
     </div>
   );
 }
